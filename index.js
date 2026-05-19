@@ -8,7 +8,7 @@ const cors = require("cors");
 const port = process.env.PORT || 8000;
 
 // mongodb connect
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const { type } = require("node:os");
 
 const uri = process.env.APEXDRIVE_DB_URI;
@@ -41,7 +41,7 @@ async function run() {
     // create api
     app.get("/cars", async (req, res) => {
       // search r sort
-      const { search, carType } = req.query;
+      const { search, type } = req.query;
       let query = {};
       //search
       if (search) {
@@ -57,21 +57,19 @@ async function run() {
       res.send(allCars);
     });
 
-    // carTypes api
-    app.get("/car-types", async (req, res) => {
-      const result = await carsCollection
-        .aggregate([
-          {
-            $group: { _id: "$carType" },
-          },
-          {
-            $match: { _id: { $ne: null } },
-          },
-        ])
-        .toArray();
+    // page details
+    app.get("/cars/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await carsCollection.findOne(query);
+      res.send(result);
+    });
 
-      const carTypes = result.map((car) => car._id);
-      res.send(carTypes);
+    // post
+    app.post("/cars", async (req, res) => {
+      const car = req.body;
+      const result = await carsCollection.insertOne(car);
+      res.send(result);
     });
   } finally {
     // Ensures that the client will close when you finish/error
