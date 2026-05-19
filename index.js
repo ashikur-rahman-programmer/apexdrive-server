@@ -9,6 +9,7 @@ const port = process.env.PORT || 8000;
 
 // mongodb connect
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const { type } = require("node:os");
 
 const uri = process.env.APEXDRIVE_DB_URI;
 
@@ -39,7 +40,20 @@ async function run() {
 
     // create api
     app.get("/cars", async (req, res) => {
-      const allCars = await carsCollection.find().toArray();
+      // search r sort
+      const { search, carType } = req.body;
+      let query = {};
+      //search
+      if (search) {
+        query.name = { $regex: search, $options: "i" };
+      }
+
+      //sort
+      if (type && type !== "All") {
+        query.carType = type;
+      }
+
+      const allCars = await carsCollection.find(query).toArray();
       res.send(allCars);
     });
   } finally {
