@@ -41,7 +41,7 @@ async function run() {
     // create api
     app.get("/cars", async (req, res) => {
       // search r sort
-      const { search, carType } = req.body;
+      const { search, carType } = req.query;
       let query = {};
       //search
       if (search) {
@@ -55,6 +55,23 @@ async function run() {
 
       const allCars = await carsCollection.find(query).toArray();
       res.send(allCars);
+    });
+
+    // carTypes api
+    app.get("/car-types", async (req, res) => {
+      const result = await carsCollection
+        .aggregate([
+          {
+            $group: { _id: "$carType" },
+          },
+          {
+            $match: { _id: { $ne: null } },
+          },
+        ])
+        .toArray();
+
+      const carTypes = result.map((car) => car._id);
+      res.send(carTypes);
     });
   } finally {
     // Ensures that the client will close when you finish/error
