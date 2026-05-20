@@ -57,6 +57,14 @@ async function run() {
       res.send(allCars);
     });
 
+    // specific user cars card add api
+    app.get("/cars", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await carsCollection.find(query).toArray();
+      res.send(result);
+    });
+
     // page details
     app.get("/cars/:id", async (req, res) => {
       const id = req.params.id;
