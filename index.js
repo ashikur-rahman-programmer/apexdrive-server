@@ -58,7 +58,7 @@ async function run() {
     });
 
     // specific user cars card add api
-    app.get("/cars", async (req, res) => {
+    app.get("/my-cars", async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
       const result = await carsCollection.find(query).toArray();
