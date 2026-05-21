@@ -84,7 +84,7 @@ async function run() {
     });
 
     // booking get api
-    app.get("/bookings/:id", async (req, res) => {
+    app.get("/bookings/:id", verifyToken, async (req, res) => {
       const userId = req.params.id;
       const query = { userId: userId };
       const result = await bookingCollection.find(query).toArray();
@@ -111,7 +111,7 @@ async function run() {
     });
 
     // specific user cars card add api
-    app.get("/my-cars", async (req, res) => {
+    app.get("/my-cars", verifyToken, async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
       const result = await carsCollection.find(query).toArray();
@@ -127,7 +127,7 @@ async function run() {
     });
 
     // post
-    app.post("/cars", async (req, res) => {
+    app.post("/cars", verifyToken, async (req, res) => {
       const car = req.body;
       const result = await carsCollection.insertOne(car);
       res.send(result);
