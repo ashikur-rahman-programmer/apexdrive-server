@@ -37,6 +37,14 @@ async function run() {
     // create database
     const database = client.db("apexdrive_db");
     const carsCollection = database.collection("cars");
+    const bookingCollection = database.collection("bookings");
+
+    // booking api
+    app.get("/bookings", async (req, res) => {
+      const query = req.body;
+      const result = await bookingCollection.insertOne(query);
+      res.send(result);
+    });
 
     // create api
     app.get("/cars", async (req, res) => {
