@@ -39,10 +39,18 @@ async function run() {
     const carsCollection = database.collection("cars");
     const bookingCollection = database.collection("bookings");
 
-    // booking api
-    app.get("/bookings", async (req, res) => {
-      const query = req.body;
-      const result = await bookingCollection.insertOne(query);
+    // booking post api
+    app.post("/bookings", async (req, res) => {
+      const bookingData = req.body;
+      const result = await bookingCollection.insertOne(bookingData);
+      res.send(result);
+    });
+
+    // booking get api
+    app.get("/bookings/:id", async (req, res) => {
+      const userId = req.params.id;
+      const query = { userId: userId };
+      const result = await bookingCollection.find(query).toArray();
       res.send(result);
     });
 
