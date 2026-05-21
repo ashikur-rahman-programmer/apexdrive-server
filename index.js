@@ -10,6 +10,7 @@ const port = process.env.PORT || 8000;
 // mongodb connect
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const { type } = require("node:os");
+const { createRemoteJWKSet, jwtVerify } = require("jose-cjs");
 
 const uri = process.env.APEXDRIVE_DB_URI;
 
@@ -24,6 +25,30 @@ const client = new MongoClient(uri, {
 // middleware
 app.use(cors());
 app.use(express.json());
+
+// jwt authorization
+
+const JWKS = createRemoteJWKSet(
+  new URL(`${process.env.APEXDRIVE_CLIENT_URL}/api/auth/jwks`),
+);
+
+const verifyToken = async (req, res, next) => {
+  const { authorization } = req.headers;
+  if (!authorization) {
+    return res.status(401).send({ error: "Unauthorized access" });
+  }
+  const token = authorization.split(" ")[1];
+  if (!token) {
+    return res.status(401).send({ error: "Unauthorized access" });
+  }
+
+  try {
+    const { payload } = await jwtVerify(token, JWKS);
+    next();
+  } catch (error) {
+    return res.status(401).send({ error: "Unauthorized access" });
+  }
+};
 
 async function run() {
   try {
