@@ -65,7 +65,7 @@ async function run() {
     const bookingCollection = database.collection("bookings");
 
     // booking post api
-    app.post("/bookings", async (req, res) => {
+    app.post("/bookings", verifyToken, async (req, res) => {
       const bookingData = req.body;
       const { _id: carId } = bookingData;
       const bookingResult = await bookingCollection.insertOne(bookingData);
@@ -119,7 +119,7 @@ async function run() {
     });
 
     // page details
-    app.get("/cars/:id", async (req, res) => {
+    app.get("/cars/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await carsCollection.findOne(query);
