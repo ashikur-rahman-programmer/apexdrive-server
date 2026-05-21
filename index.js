@@ -42,8 +42,20 @@ async function run() {
     // booking post api
     app.post("/bookings", async (req, res) => {
       const bookingData = req.body;
-      const result = await bookingCollection.insertOne(bookingData);
-      res.send(result);
+      const { _id: carId } = bookingData;
+      const bookingResult = await bookingCollection.insertOne(bookingData);
+
+      if (bookingResult.insertedId && carId) {
+        const query = { _id: new ObjectId(carId) };
+        const updateDoc = {
+          $inc: {
+            bookingCount: 1,
+          },
+        };
+        await carsCollection.updateOne(query, updateDoc);
+      }
+
+      res.send(bookingResult);
     });
 
     // booking get api
