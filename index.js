@@ -23,7 +23,20 @@ const client = new MongoClient(uri, {
 });
 
 // middleware
-app.use(cors());
+// app.use(cors());
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://apexdrive-rental-car.vercel.app",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+  }),
+);
+
 app.use(express.json());
 
 // jwt authorization
