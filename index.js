@@ -79,6 +79,33 @@ async function run() {
       const result = await carsCollection.insertOne(car);
       res.send(result);
     });
+
+    // update api
+    app.patch("/cars/:id", async (req, res) => {
+      const id = req.params.id;
+      const car = req.body;
+      const query = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          dailyRentPrice: car.dailyRentPrice,
+          carType: car.carType,
+          imageUrl: car.imageUrl,
+          location: car.location,
+          availability: car.availability,
+          description: car.description,
+        },
+      };
+      const result = await carsCollection.updateOne(query, updateDoc);
+      res.send(result);
+    });
+
+    // delete api
+    app.delete("/cars/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await carsCollection.deleteOne(query);
+      res.send(result);
+    });
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
