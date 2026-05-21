@@ -134,7 +134,7 @@ async function run() {
     });
 
     // update api
-    app.patch("/cars/:id", async (req, res) => {
+    app.patch("/cars/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
       const car = req.body;
       const query = { _id: new ObjectId(id) };
@@ -153,7 +153,7 @@ async function run() {
     });
 
     // delete api
-    app.delete("/cars/:id", async (req, res) => {
+    app.delete("/cars/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await carsCollection.deleteOne(query);
