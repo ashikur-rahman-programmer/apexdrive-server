@@ -24,19 +24,6 @@ const client = new MongoClient(uri, {
 
 // middleware
 app.use(cors());
-
-// app.use(
-//   cors({
-//     origin: [
-//       "http://localhost:3000",
-//       "https://apexdrive-rental-car.vercel.app",
-//     ],
-//     credentials: true,
-//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-//     allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
-//   }),
-// );
-
 app.use(express.json());
 
 // jwt authorization
@@ -66,7 +53,7 @@ const verifyToken = async (req, res, next) => {
 async function run() {
   try {
     // await client.connect();
-    // Send a ping to confirm a successful connection
+    // // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
     // console.log(
     //   "Pinged your deployment. You successfully connected to MongoDB!",
@@ -78,7 +65,7 @@ async function run() {
     const bookingCollection = database.collection("bookings");
 
     // booking post api
-    app.post("/bookings", verifyToken, async (req, res) => {
+    app.post("/bookings", async (req, res) => {
       const bookingData = req.body;
       const { _id: carId } = bookingData;
       const bookingResult = await bookingCollection.insertOne(bookingData);
@@ -147,7 +134,7 @@ async function run() {
     });
 
     // update api
-    app.patch("/cars/:id", verifyToken, async (req, res) => {
+    app.patch("/cars/:id", async (req, res) => {
       const id = req.params.id;
       const car = req.body;
       const query = { _id: new ObjectId(id) };
@@ -166,7 +153,7 @@ async function run() {
     });
 
     // delete api
-    app.delete("/cars/:id", verifyToken, async (req, res) => {
+    app.delete("/cars/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await carsCollection.deleteOne(query);
